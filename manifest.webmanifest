@@ -1,0 +1,14 @@
+{
+  "name": "Chene Tax",
+  "short_name": "Chene Tax",
+  "description": "Track salary, fuel levy, commission, km and SARS tax owed",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F2F5F5",
+  "theme_color": "#0F766E",
+  "icons": [
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

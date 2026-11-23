@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Chene Tax">
+<meta name="theme-color" content="#0F766E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-512.png">
+<title>Chene Tax</title>
+<style>
+:root{
+  --teal:#0F766E;--teal-dark:#115E59;--amber:#F59E0B;--indigo:#6366F1;
+  --salary:#14B8A6;--fuel:#F59E0B;--comm:#6366F1;--owe:#E11D48;--refund:#16A34A;
+  --bg:#F2F5F5;--card:#FFFFFF;--text:#0F1A1A;--muted:#5B6B6B;--line:#E3EAEA;--track:#E3EAEA;
+  --primary:#0F766E;--warn-bg:#FEF3C7;--warn-fg:#451A03;--info-bg:#CCFBF1;--info-fg:#042F2E;
+  --tab:rgba(255,255,255,.86);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0B1212;--card:#141E1E;--text:#E2EAEA;--muted:#A9BABA;--line:#263333;--track:#1F2B2B;
+  --primary:#5EEAD4;--warn-bg:#5C3D00;--warn-fg:#FEF3C7;--info-bg:#115E59;--info-fg:#CCFBF1;
+  --tab:rgba(20,30,30,.86);
+}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.35}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.app{max-width:560px;margin:0 auto;min-height:100vh;padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:center;
+  padding:calc(10px + env(safe-area-inset-top)) 12px 8px 20px}
+header .t{flex:1}
+.lbl{font-size:12px;color:var(--muted);font-weight:500}
+h1{font-size:24px;margin:0;font-weight:700;letter-spacing:-.3px}
+.sub{font-size:13px;color:var(--muted)}
+.icon-btn{width:40px;height:40px;border-radius:20px;display:grid;place-items:center;font-size:22px;color:var(--primary)}
+.icon-btn:active{background:var(--track)}
+main{padding:4px 16px;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--card);border-radius:20px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card h2{font-size:17px;margin:0 0 2px;font-weight:600}
+.card .cs{font-size:13px;color:var(--muted);margin-bottom:12px}
+.hero{border-radius:28px;padding:24px;color:#fff;background:linear-gradient(135deg,#0F766E,#115E59 60%,#134E4A)}
+.hero .big{font-size:36px;font-weight:700;letter-spacing:-.5px;margin:4px 0 14px}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{padding:6px 12px;border-radius:999px;font-size:13px;font-weight:500}
+.prog{height:8px;border-radius:4px;background:rgba(255,255,255,.2);margin-top:18px;overflow:hidden}
+.prog div{height:100%;background:#FCD34D;border-radius:4px}
+.row{display:flex;align-items:center;padding:5px 0;gap:8px}
+.row .k{flex:1}
+.row.b{font-weight:600}
+.row.m{color:var(--muted)}
+.dot{width:10px;height:10px;border-radius:3px;flex:none}
+hr{border:0;border-top:1px solid var(--line);margin:8px 0}
+.notice{display:flex;gap:10px;padding:12px;border-radius:14px;font-size:14px;background:var(--info-bg);color:var(--info-fg);margin-top:6px}
+.notice.w{background:var(--warn-bg);color:var(--warn-fg)}
+.split{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--track);margin-bottom:12px}
+.chart{display:grid;grid-template-columns:repeat(12,1fr);gap:0;height:150px;align-items:end}
+.bar{margin:0 22%;height:100%;background:var(--track);border-radius:6px;display:flex;flex-direction:column-reverse;overflow:hidden}
+.bar div{width:100%}
+.mlabels{display:grid;grid-template-columns:repeat(12,1fr);text-align:center;font-size:12px;color:var(--muted);margin-top:6px}
+.legend{display:flex;gap:14px;margin-top:10px;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.fab{position:fixed;right:max(16px,calc(50% - 264px));bottom:calc(76px + env(safe-area-inset-bottom));z-index:6;
+  background:var(--teal);color:#fff;padding:15px 20px;border-radius:18px;font-weight:600;font-size:15px;
+  box-shadow:0 6px 20px rgba(15,118,110,.35);display:flex;gap:8px;align-items:center}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--tab);backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--line);
+  display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;max-width:186px;padding:8px 0 6px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted)}
+nav button svg{width:26px;height:26px}
+nav button.on{color:var(--primary);font-weight:600}
+.month{display:flex;align-items:center;gap:12px;padding:14px 18px}
+.month .k{flex:1}
+.month .t{font-weight:600}
+.tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--info-bg);color:var(--info-fg);margin-left:6px}
+.plus{color:var(--primary);font-size:24px}
+.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;display:none;-webkit-overflow-scrolling:touch}
+.sheet.open{display:block}
+.sheet .bar-top{position:sticky;top:0;background:var(--bg);display:flex;align-items:center;padding:calc(8px + env(safe-area-inset-top)) 8px 8px;z-index:2}
+.sheet .bar-top h1{font-size:20px;flex:1;text-align:center;margin-right:40px}
+.field{display:flex;align-items:center;border:1px solid var(--line);border-radius:14px;padding:0 14px;margin-bottom:10px;background:var(--card)}
+.field:focus-within{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary)}
+.field label{display:flex;flex-direction:column;flex:1;padding:8px 0}
+.field label span{font-size:12px;color:var(--muted)}
+.field .in{display:flex;align-items:center;gap:4px}
+.field input,.field textarea{border:0;outline:0;background:none;color:var(--text);font:inherit;font-size:17px;width:100%;padding:2px 0}
+.field textarea{resize:none;min-height:56px}
+.btn{display:block;width:100%;padding:15px;border-radius:14px;font-weight:600;font-size:16px;text-align:center}
+.btn.p{background:var(--teal);color:#fff}
+.btn.o{border:1px solid var(--line);background:var(--card)}
+.btn.t{color:var(--primary)}
+.btn.d{color:var(--owe)}
+.btn+.btn{margin-top:10px}
+.actions{position:sticky;bottom:0;display:flex;gap:10px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:var(--bg)}
+.actions .btn{margin:0}
+.seg{display:flex;background:var(--track);border-radius:12px;padding:3px;margin:8px 0 14px}
+.seg button{flex:1;padding:8px;border-radius:9px;font-size:14px;font-weight:500}
+.seg button.on{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.stepper{display:flex;align-items:center;gap:12px;margin-top:8px}
+.stepper button{width:40px;height:40px;border-radius:12px;background:var(--track);font-size:22px;font-weight:600}
+.stepper div{flex:1;text-align:center;font-weight:500}
+.toast{position:fixed;left:50%;bottom:calc(140px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#0F1A1A;color:#fff;
+  padding:10px 18px;border-radius:12px;font-size:14px;z-index:50;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center}
+.toast.show{opacity:1}
+.foot{font-size:12px;color:var(--muted);text-align:center;padding:4px 12px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="t">
+      <div class="lbl">SARS tax year</div>
+      <h1 id="yearLabel"></h1>
+      <div class="sub" id="yearRange"></div>
+    </div>
+    <button class="icon-btn" id="prevYear" aria-label="Previous tax year">‹</button>
+    <button class="icon-btn" id="nextYear" aria-label="Next tax year">›</button>
+  </header>
+  <main id="view"></main>
+</div>
+
+<button class="fab" id="fab">＋ Capture month</button>
+
+<nav>
+  <button data-tab="overview" class="on"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Overview</button>
+  <button data-tab="months"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V10h14zM7 12h5v5H7z"/></svg>Months</button>
+  <button data-tab="settings"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.3 7.3 0 0 0-1.7-1L15 3h-4l-.4 2.9a7.3 7.3 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.3 7.3 0 0 0 1.7 1L11 21h4l.4-2.9a7.3 7.3 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg>Settings</button>
+</nav>
+
+<div class="sheet" id="sheet"></div>
+<input type="file" id="restoreFile" accept=".json,application/json" class="hidden">
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ---------------- SARS tables (same as the Android app) ---------------- */
+const TABLES = {
+  2027: {
+    year: 2027,
+    brackets: [
+      [245100, 0, .18, 0], [383100, 44118, .26, 245100], [530200, 79998, .31, 383100],
+      [695800, 125599, .36, 530200], [887000, 185215, .39, 695800], [1878600, 259783, .41, 887000],
+      [Infinity, 666339, .45, 1878600]],
+    primary: 17820, secondary: 9765, tertiary: 3249,
+    medMain: 376, medFirstDep: 376, medOtherDep: 254,
+    vehicle: [ // maxValue, fixed cost / yr, fuel c/km, maintenance c/km
+      [115000, 38344, 132.9, 49.1], [230000, 68487, 148.4, 61.4], [345000, 98689, 161.2, 67.8],
+      [460000, 125393, 173.4, 74.0], [575000, 152097, 185.5, 86.9], [690000, 180078, 212.8, 102.0],
+      [805000, 208106, 216.5, 114.5], [920000, 237679, 220.1, 126.1], [Infinity, 237679, 220.1, 126.1]]
+  }
+};
+function tableFor(y){
+  if (TABLES[y]) return [TABLES[y], true];
+  const ys = Object.keys(TABLES).map(Number).sort((a,b)=>Math.abs(a-y)-Math.abs(b-y));
+  return [TABLES[ys[0]], false];
+}
+
+/* ---------------- Storage ---------------- */
+const KEY = "chene-tax-data-v1";
+const MONTH_FIELDS = ["salary","travel","commission","paye","bizKm","privKm"];
+function emptyMonth(){ return {salary:0,travel:0,commission:0,paye:0,bizKm:0,privKm:0,note:""}; }
+function emptyYear(y){ return {year:y, months:Array.from({length:12}, emptyMonth), prov1:0, prov2:0}; }
+function defaultData(){ return {settings:{ageBand:0, vehicleValue:0, medical:0}, years:{}, lastBackup:null, savedAt:null}; }
+
+let data;
+function load(){
+  try { data = JSON.parse(localStorage.getItem(KEY)) || defaultData(); }
+  catch(e){ data = defaultData(); }
+  data.settings = Object.assign(defaultData().settings, data.settings||{});
+  data.years = data.years || {};
+}
+function save(){
+  data.savedAt = new Date().toISOString();
+  try { localStorage.setItem(KEY, JSON.stringify(data)); }
+  catch(e){ toast("Couldn't save – phone storage may be full"); }
+}
+// Ask the browser to keep our data even when storage runs low.
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+
+/* ---------------- Tax years ---------------- */
+const MONTHS = ["March","April","May","June","July","August","September","October","November","December","January","February"];
+function currentTaxYear(d=new Date()){ return d.getMonth()>=2 ? d.getFullYear()+1 : d.getFullYear(); }
+function calYear(ty,i){ return i<=9 ? ty-1 : ty; }
+function yearLabel(ty){ return `${ty-1}/${String(ty%100).padStart(2,"0")}`; }
+function monthLabel(ty,i){ return `${MONTHS[i]} ${calYear(ty,i)}`; }
+function currentMonthIndex(ty){ const d=new Date(); return currentTaxYear(d)!==ty ? -1 : (d.getMonth()+10)%12; }
+function febEnd(y){ return new Date(y,2,0).getDate(); }
+
+let sel = currentTaxYear();
+function yearData(){ return data.years[sel] || emptyYear(sel); }
+function ensureYear(){ if(!data.years[sel]) data.years[sel]=emptyYear(sel); return data.years[sel]; }
+const isEmptyMonth = m => MONTH_FIELDS.every(f => !m[f]);
+const income = m => (+m.salary||0)+(+m.travel||0)+(+m.commission||0);
+
+/* ---------------- Calculator ---------------- */
+function totals(y){
+  const t={salary:0,travel:0,commission:0,paye:0,bizKm:0,privKm:0}; let n=0;
+  y.months.forEach(m=>{ if(!isEmptyMonth(m)) n++; MONTH_FIELDS.forEach(f=>t[f]+= +m[f]||0); });
+  return [t,n];
+}
+function normalTax(x,tb){ if(x<=0) return 0; const b=tb.brackets.find(b=>x<=b[0]); return b[1]+(x-b[3])*b[2]; }
+function marginal(x,tb){ return tb.brackets.find(b=>Math.max(x,0)<=b[0])[2]; }
+function rebates(tb,s){ return tb.primary + (s.ageBand>=1?tb.secondary:0) + (s.ageBand>=2?tb.tertiary:0); }
+function medCredits(tb,s,months){
+  const m=s.medical; let pm=0;
+  if(m===1) pm=tb.medMain; else if(m>=2) pm=tb.medMain+tb.medFirstDep+(m-2)*tb.medOtherDep;
+  return pm*months;
+}
+function liab(x,tb,r,c){ return Math.max(0, normalTax(x,tb)-r-c); }
+
+function calculate(year,t,months,prov,s){
+  const [tb,exact]=tableFor(year);
+  const band = s.vehicleValue>0 ? tb.vehicle.find(v=>s.vehicleValue<=v[0]) : null;
+  const totalKm=t.bizKm+t.privKm;
+  const fixed=(band?band[1]:0)*Math.min(months,12)/12;
+  const cpk = band && totalKm>0 ? fixed/totalKm + (band[2]+band[3])/100 : 0;
+  const travelDed = Math.min(t.travel, t.bizKm*cpk);
+  const inc = t.salary+t.travel+t.commission;
+  const taxable=Math.max(0, inc-travelDed);
+  const reb=rebates(tb,s), cred=medCredits(tb,s,Math.min(Math.max(months,0),12));
+  const L=liab(taxable,tb,reb,cred);
+  const Lnc=liab(Math.max(0,t.salary+t.travel-travelDed),tb,reb,cred);
+  const expPaye=liab(t.salary+0.8*t.travel,tb,reb,cred);
+  const paid=t.paye+prov;
+  const commTax=L-Lnc;
+  return {t,inc,tb,exact,band,cpk,travelDed,taxable,before:normalTax(taxable,tb),reb,cred,L,commTax,expPaye,prov,paid,
+    balance:L-paid, marginal:marginal(taxable,tb), effective: inc>0?L/inc:0,
+    setAside: t.commission>0 ? commTax/t.commission : marginal(taxable,tb)};
+}
+function projected(y,s){
+  const [t,n]=totals(y); const f=n?12/n:0; const p={};
+  Object.keys(t).forEach(k=>p[k]=t[k]*f);
+  return calculate(y.year,p,12,(+y.prov1||0)+(+y.prov2||0),s);
+}
+
+/* ---------------- Formatting ---------------- */
+function money(v,cents=false){
+  const neg=v<0; v=Math.abs(v);
+  const s=cents?v.toFixed(2):String(Math.round(v));
+  const [i,d]=s.split(".");
+  return (neg?"-":"")+"R "+i.replace(/\B(?=(\d{3})+(?!\d))/g," ")+(d?"."+d:"");
+}
+const pct=v=>(v*100).toFixed(1).replace(/\.0$/,"")+"%";
+const km=v=>String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g," ")+" km";
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const num=s=>{ const v=parseFloat(String(s).replace(/[\sR]/g,"").replace(/,/g,".")); return isFinite(v)&&v>0?v:0; };
+const inputText=v=>v?String(+v.toFixed(2)):"";
+
+/* ---------------- UI helpers ---------------- */
+const $=id=>document.getElementById(id);
+function row(k,v,o={}){ return `<div class="row ${o.b?"b":""} ${o.m?"m":""}">${o.dot?`<span class="dot" style="background:${o.dot}"></span>`:""}<span class="k">${k}</span><span${o.c?` style="color:${o.c}"`:""}>${v}</span></div>`; }
+function card(title,sub,body){ return `<section class="card"><h2>${title}</h2>${sub?`<div class="cs">${sub}</div>`:`<div style="height:8px"></div>`}${body}</section>`; }
+function notice(t,w){ return `<div class="notice ${w?"w":""}"><span>${w?"⚠️":"ℹ️"}</span><span>${t}</span></div>`; }
+let toastTimer;
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),2400); }
+
+let tab="overview";
+function render(){
+  $("yearLabel").textContent=yearLabel(sel);
+  $("yearRange").textContent=`1 Mar ${sel-1} – ${febEnd(sel)} Feb ${sel}`;
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
+  $("fab").classList.toggle("hidden",tab==="settings");
+  $("view").innerHTML = tab==="overview"?overview():tab==="months"?monthsView():settingsView();
+  if(tab==="settings") bindSettings();
+  document.querySelectorAll("[data-month]").forEach(el=>el.onclick=()=>openMonth(+el.dataset.month));
+}
+
+/* ---------------- Overview ---------------- */
+function lastWeekday(y,m){ const d=new Date(y,m+1,0); while(d.getDay()===0||d.getDay()===6) d.setDate(d.getDate()-1); return d; }
+function overview(){
+  const y=yearData(), s=data.settings, r=projected(y,s), [ytd,n]=totals(y);
+  const owe=r.balance>=0;
+  let h=`<section class="hero">
+    <div style="opacity:.85;font-weight:500">${n===0?"Nothing captured yet":owe?"Estimated to pay SARS at year end":"Estimated refund from SARS"}</div>
+    <div class="big">${money(Math.abs(r.balance))}</div>
+    <div class="pills"><span class="pill" style="background:rgba(255,255,255,.16)">Commission tax ${money(r.commTax)}</span>
+    <span class="pill" style="background:rgba(245,158,11,.2);color:#FDE68A">Save ${pct(r.setAside)} of commission</span></div>
+    <div class="prog"><div style="width:${n/12*100}%"></div></div>
+    <div style="opacity:.8;font-size:12px;margin-top:6px">${n} of 12 months captured</div></section>`;
+  h+=backupNag();
+  if(n===0) return h+card("Let's get started","Tap “Capture month” and enter the figures from your payslip and logbook. The estimate updates as you go.","");
+  const prov=(+y.prov1||0)+(+y.prov2||0), setAside=ytd.commission*r.setAside;
+  h+=card("Set aside for SARS","Commission isn't taxed on your payslip, so keep this aside in a separate account.",
+    row("Commission earned so far",money(ytd.commission),{dot:"var(--comm)"})+
+    row(`Put away about ${pct(r.setAside)} of it`,money(setAside),{b:1})+
+    row("Provisional tax already paid",money(prov),{m:1})+"<hr>"+
+    row("Still to put away",money(Math.max(0,setAside-prov)),{b:1,c:"var(--primary)"}));
+  const inc=ytd.salary+ytd.travel+ytd.commission||1;
+  h+=card("Income so far",`${n} of 12 months captured`,
+    `<div class="split"><div style="width:${ytd.salary/inc*100}%;background:var(--salary)"></div><div style="width:${ytd.travel/inc*100}%;background:var(--fuel)"></div><div style="width:${ytd.commission/inc*100}%;background:var(--comm)"></div></div>`+
+    row("Base salary",money(ytd.salary),{dot:"var(--salary)"})+row("Fuel levy",money(ytd.travel),{dot:"var(--fuel)"})+
+    row("Commission",money(ytd.commission),{dot:"var(--comm)"})+"<hr>"+row("Total",money(ytd.salary+ytd.travel+ytd.commission),{b:1})+
+    row("PAYE deducted by employer",money(ytd.paye),{m:1}));
+  const mx=Math.max(1,...y.months.map(income));
+  h+=card("Month by month","Tap a bar to edit that month",
+    `<div class="chart">${y.months.map((m,i)=>`<div class="bar" data-month="${i}" style="margin:0 22%">${
+      [["salary","--salary"],["travel","--fuel"],["commission","--comm"]].map(([f,c])=>m[f]>0?`<div style="height:${m[f]/mx*100}%;background:var(${c})"></div>`:"").join("")}</div>`).join("")}</div>
+    <div class="mlabels">${MONTHS.map(m=>`<span>${m[0]}</span>`).join("")}</div>
+    <div class="legend"><span><i class="dot" style="background:var(--salary)"></i>Salary</span><span><i class="dot" style="background:var(--fuel)"></i>Fuel levy</span><span><i class="dot" style="background:var(--comm)"></i>Commission</span></div>`);
+  const tk=ytd.bizKm+ytd.privKm;
+  let kmb=row("Business km",km(ytd.bizKm))+row("Private km",km(ytd.privKm))+row("Business use",tk>0?pct(ytd.bizKm/tk):"–",{m:1})+"<hr>";
+  if(s.vehicleValue<=0) kmb+=notice("Add your vehicle's value in Settings to estimate your travel claim.",1);
+  else { kmb+=row("SARS cost per business km",money(r.cpk,true),{m:1})+row("Projected travel deduction",money(r.travelDed),{b:1});
+    if(ytd.privKm===0&&ytd.bizKm>0) kmb+=notice("Capture your private km too – SARS spreads the vehicle's fixed cost over all km driven.",1); }
+  h+=card("Kilometres & fuel levy","SARS lets you claim business travel against your fuel levy if you keep a logbook.",kmb);
+  let tx=row("Projected income",money(r.inc))+row("Less travel deduction","-"+money(r.travelDed),{m:1})+row("Taxable income",money(r.taxable),{b:1})+"<hr>"+
+    row("Tax per SARS tables",money(r.before))+row("Less rebates","-"+money(r.reb),{m:1})+
+    (r.cred>0?row("Less medical aid credits","-"+money(r.cred),{m:1}):"")+
+    row("Tax for the year",money(r.L),{b:1})+row("…of which caused by commission",money(r.commTax),{dot:"var(--comm)",m:1})+"<hr>"+
+    row("PAYE (projected)","-"+money(r.t.paye),{m:1})+row("Provisional tax paid","-"+money(r.prov),{m:1})+
+    row(owe?"Estimated amount owing":"Estimated refund",money(Math.abs(r.balance)),{b:1,c:owe?"var(--owe)":"var(--refund)"})+
+    `<div style="height:8px"></div>`+row("Marginal rate",pct(r.marginal),{m:1})+row("Effective rate",pct(r.effective),{m:1});
+  if(ytd.paye>0&&r.expPaye>0){ const d=r.t.paye-r.expPaye;
+    if(Math.abs(d)>0.1*r.expPaye) tx+=notice(`Your PAYE looks ${d<0?"lower":"higher"} than expected for salary + 80% of fuel levy (about ${money(r.expPaye)} a year). Check your payslip figures.`,1); }
+  if(!r.exact) tx+=notice(`SARS tables for ${yearLabel(sel)} aren't in the app yet – using ${yearLabel(r.tb.year)} rates.`,1);
+  h+=card("Tax for the full year",`Estimate based on your ${n} month(s) so far, projected to 12.`,tx);
+  const f=d=>d.toLocaleDateString("en-ZA",{weekday:"short",day:"numeric",month:"long",year:"numeric"});
+  const p1=lastWeekday(sel-1,7), p2=lastWeekday(sel,1), now=new Date();
+  const dr=(k,d,past)=>`<div class="row"><span class="k">${k}</span><span style="font-weight:500;color:${past?"var(--muted)":"var(--primary)"}">${d}</span></div>`;
+  h+=card("Key SARS dates","Provisional tax (IRP6) – if you're registered as a provisional taxpayer.",
+    dr("1st provisional payment",f(p1),now>p1)+dr("2nd provisional payment",f(p2),now>p2)+dr("Tax year ends",f(new Date(sel,1,febEnd(sel))),false)+
+    `<div class="sub" style="font-size:12px;margin-top:4px">Dates shown are the last weekday of the month; check eFiling for public holidays.</div>`);
+  h+=`<p class="foot">Estimates only – not tax advice. Final tax is determined by SARS on assessment (ITR12). Retirement annuity, medical expenses and other deductions are not included.</p>`;
+  return h;
+}
+function backupNag(){
+  const has=Object.values(data.years).some(y=>y.months.some(m=>!isEmptyMonth(m)));
+  if(!has) return "";
+  const last=data.lastBackup?new Date(data.lastBackup):null;
+  const days=last?(Date.now()-last)/864e5:Infinity;
+  if(days<30) return "";
+  return `<section class="card" style="padding:14px 18px">${notice(last?`Last backup was ${Math.floor(days)} days ago.`:"Your figures are saved on this phone, but not backed up yet.",1)}
+    <button class="btn t" id="nagBackup" style="padding:10px 0 0">Back up now</button></section>`;
+}
+
+/* ---------------- Months list ---------------- */
+function monthsView(){
+  const y=yearData(), cur=currentMonthIndex(sel);
+  return y.months.map((m,i)=>{
+    const e=isEmptyMonth(m);
+    return `<section class="card month" data-month="${i}">
+      <div class="k"><div class="t">${monthLabel(sel,i)}${i===cur?'<span class="tag">This month</span>':""}</div>
+      <div class="sub">${e?"Not captured yet":`Salary ${money(m.salary)} · Fuel ${money(m.travel)} · Comm ${money(m.commission)}`}</div>
+      ${!e&&(m.bizKm||m.privKm)?`<div class="sub">${km(m.bizKm)} business · ${km(m.privKm)} private</div>`:""}</div>
+      ${e?'<span class="plus">＋</span>':`<b>${money(income(m))}</b>`}</section>`;
+  }).join("");
+}
+
+/* ---------------- Edit month ---------------- */
+function field(id,label,val,unit){
+  return `<div class="field"><label for="${id}"><span>${label}</span><div class="in">${unit?"":"<b>R</b>"}<input id="${id}" inputmode="decimal" autocomplete="off" value="${esc(val)}" placeholder="0">${unit?`<span class="sub">${unit}</span>`:""}</div></label></div>`;
+}
+function openMonth(i){
+  const y=yearData(), m=y.months[i], prev=i>0?y.months[i-1]:null;
+  const sh=$("sheet");
+  sh.innerHTML=`<div class="bar-top"><button class="icon-btn" id="mBack" aria-label="Back">‹</button><h1>${monthLabel(sel,i)}</h1></div>
+  <main>
+    ${prev&&!isEmptyMonth(prev)?`<button class="btn t" id="mCopy" style="padding:6px">Copy salary, fuel levy &amp; PAYE from last month</button>`:""}
+    ${card("Income","Gross amounts from your payslip",field("fSalary","Base salary",inputText(m.salary))+field("fTravel","Fuel levy / travel allowance",inputText(m.travel))+field("fComm","Commission earned",inputText(m.commission))+'<div id="commHint"></div>')}
+    ${card("Tax deducted","PAYE shown on your payslip for this month",field("fPaye","PAYE deducted",inputText(m.paye)))}
+    ${card("Kilometres","From your logbook – business trips and private driving",field("fBiz","Business km",inputText(m.bizKm),"km")+field("fPriv","Private km",inputText(m.privKm),"km"))}
+    ${card("Note","",`<div class="field"><label><textarea id="fNote" placeholder="e.g. 2 sales registered this month">${esc(m.note||"")}</textarea></label></div>`)}
+    ${isEmptyMonth(m)?"":`<button class="btn d" id="mClear">Clear this month</button>`}
+  </main>
+  <div class="actions"><button class="btn o" id="mCancel">Cancel</button><button class="btn p" id="mSave">Save</button></div>`;
+  sh.classList.add("open"); sh.scrollTop=0; document.body.style.overflow="hidden";
+  const close=()=>{ sh.classList.remove("open"); document.body.style.overflow=""; render(); };
+  const hint=()=>{ const c=num($("fComm").value); const r=projected(yearData(),data.settings).setAside;
+    $("commHint").innerHTML=c>0?notice(`Set aside about ${money(c*r)} of this commission for SARS (${pct(r)}).`):""; };
+  $("fComm").oninput=hint; hint();
+  $("mBack").onclick=$("mCancel").onclick=close;
+  if($("mCopy")) $("mCopy").onclick=()=>{ $("fSalary").value=inputText(prev.salary); $("fTravel").value=inputText(prev.travel); $("fPaye").value=inputText(prev.paye); toast("Copied from last month"); };
+  if($("mClear")) $("mClear").onclick=()=>{ if(confirm(`Clear all figures for ${monthLabel(sel,i)}?`)){ ensureYear().months[i]=emptyMonth(); save(); toast("Month cleared"); close(); } };
+  $("mSave").onclick=()=>{
+    ensureYear().months[i]={salary:num($("fSalary").value),travel:num($("fTravel").value),commission:num($("fComm").value),
+      paye:num($("fPaye").value),bizKm:num($("fBiz").value),privKm:num($("fPriv").value),note:$("fNote").value.trim()};
+    save(); toast(`${MONTHS[i]} saved`); close();
+  };
+}
+
+/* ---------------- Settings ---------------- */
+function settingsView(){
+  const s=data.settings, y=yearData(), [tb,exact]=tableFor(sel);
+  const band=s.vehicleValue>0?tb.vehicle.find(v=>s.vehicleValue<=v[0]):null;
+  const medLabel=["No medical aid","Just me","Me + 1 dependant"][s.medical]||`Me + ${s.medical-1} dependants`;
+  const last=data.lastBackup?new Date(data.lastBackup).toLocaleDateString("en-ZA",{day:"numeric",month:"long",year:"numeric"}):"never";
+  return card("About you","Used for SARS rebates and medical aid tax credits",
+      `<div class="lbl" style="font-size:14px">Age on 28 February</div>
+      <div class="seg" id="ageSeg">${["Under 65","65 – 74","75+"].map((l,i)=>`<button data-age="${i}" class="${s.ageBand===i?"on":""}">${l}</button>`).join("")}</div>
+      <div class="lbl" style="font-size:14px">Medical aid members</div>
+      <div class="stepper"><button id="medMinus">–</button><div>${medLabel}</div><button id="medPlus">+</button></div>`)+
+    card("Your vehicle","Purchase price incl. VAT – SARS uses it to work out your cost per km",
+      field("sVehicle","Vehicle value",inputText(s.vehicleValue))+
+      (band?row("Fixed cost per year",money(band[1]),{m:1})+row("Fuel cost",`${band[2]} c/km`,{m:1})+row("Maintenance cost",`${band[3]} c/km`,{m:1}):"")+
+      notice("Keep a SARS logbook (opening/closing km, dates, destinations, reason for each business trip) – you need it to claim."))+
+    card(`Provisional tax paid – ${yearLabel(sel)}`,"Amounts you paid to SARS yourself (IRP6) for this tax year",
+      field("sP1","1st payment (August)",inputText(+y.prov1||0))+field("sP2","2nd payment (February)",inputText(+y.prov2||0)))+
+    card("Backup &amp; restore",`Your figures are saved on this iPhone automatically. Last backup: <b>${last}</b>.`,
+      `<button class="btn p" id="bBackup">Back up all data</button>
+       <button class="btn o" id="bRestore">Restore from backup</button>
+       <div class="sub" style="margin-top:10px">Back up saves a file you can keep in iCloud Drive (Files app), email to yourself or send on WhatsApp. Restore it on a new phone, or if you ever delete the app.</div>`)+
+    card("Export","Send your figures to yourself, your accountant or a spreadsheet",`<button class="btn o" id="bCsv">Share ${yearLabel(sel)} as CSV</button>`)+
+    card("About the numbers","",`<div class="sub">Uses SARS ${yearLabel(tb.year)} tax tables${exact?"":" (newer tables not added yet)"}. Your monthly figures are projected to a full year, rebates and medical credits are applied, and the travel claim uses the SARS cost-per-km table. Commission tax is the extra tax your commission adds on top of your salary and fuel levy.<br><br>This is an estimate to help you plan – not tax advice. Your final tax is calculated by SARS when you file.</div>`);
+}
+function bindSettings(){
+  const s=data.settings;
+  document.querySelectorAll("[data-age]").forEach(b=>b.onclick=()=>{ s.ageBand=+b.dataset.age; save(); render(); });
+  $("medMinus").onclick=()=>{ s.medical=Math.max(0,s.medical-1); save(); render(); };
+  $("medPlus").onclick=()=>{ s.medical=Math.min(10,s.medical+1); save(); render(); };
+  $("sVehicle").onchange=e=>{ s.vehicleValue=num(e.target.value); save(); render(); toast("Vehicle value saved"); };
+  $("sP1").onchange=e=>{ ensureYear().prov1=num(e.target.value); save(); toast("Saved"); };
+  $("sP2").onchange=e=>{ ensureYear().prov2=num(e.target.value); save(); toast("Saved"); };
+  $("bBackup").onclick=backup;
+  $("bRestore").onclick=()=>$("restoreFile").click();
+  $("bCsv").onclick=shareCsv;
+}
+
+/* ---------------- Backup / restore / CSV ---------------- */
+async function shareFile(name,text,type){
+  const blob=new Blob([text],{type});
+  const file=new File([blob],name,{type});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file],title:name}); return true; }
+    catch(e){ if(e.name==="AbortError") return false; }
+  }
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  return true;
+}
+async function backup(){
+  const d=new Date(), stamp=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  const copy=Object.assign({},data,{app:"Chene Tax",exportedAt:d.toISOString()});
+  if(await shareFile(`Chene-Tax-backup-${stamp}.json`,JSON.stringify(copy,null,1),"application/json")){
+    data.lastBackup=d.toISOString(); save(); render(); toast("Backup created");
+  }
+}
+$("restoreFile").onchange=async e=>{
+  const f=e.target.files[0]; e.target.value=""; if(!f) return;
+  try{
+    const d=JSON.parse(await f.text());
+    if(!d||typeof d!=="object"||!d.years||!d.settings) throw new Error("bad");
+    const n=Object.values(d.years).reduce((a,y)=>a+y.months.filter(m=>!isEmptyMonth(m)).length,0);
+    if(!confirm(`Restore this backup (${n} captured months)? It replaces what's on this phone now.`)) return;
+    delete d.app; delete d.exportedAt;
+    localStorage.setItem(KEY,JSON.stringify(d)); load(); render(); toast("Backup restored");
+  }catch(err){ toast("That file isn't a Chene Tax backup"); }
+};
+function shareCsv(){
+  const y=yearData(), r=projected(y,data.settings);
+  const lines=[["Month","Base salary","Fuel levy","Commission","PAYE","Business km","Private km","Note"].join(",")];
+  y.months.forEach((m,i)=>lines.push([monthLabel(sel,i),m.salary,m.travel,m.commission,m.paye,m.bizKm,m.privKm,`"${(m.note||"").replace(/"/g,'""')}"`].join(",")));
+  const [t]=totals(y);
+  lines.push(["Total",t.salary,t.travel,t.commission,t.paye,t.bizKm,t.privKm,""].join(","));
+  lines.push("");
+  lines.push(`Provisional tax paid,${(+y.prov1||0)+(+y.prov2||0)}`);
+  lines.push(`Projected tax for year,${Math.round(r.L)}`);
+  lines.push(`Projected balance (positive = owing),${Math.round(r.balance)}`);
+  shareFile(`Chene-Tax-${yearLabel(sel).replace("/","-")}.csv`,lines.join("\n"),"text/csv");
+}
+
+/* ---------------- Wiring ---------------- */
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{ tab=b.dataset.tab; window.scrollTo(0,0); render(); });
+$("prevYear").onclick=()=>{ sel--; render(); };
+$("nextYear").onclick=()=>{ sel++; render(); };
+$("fab").onclick=()=>{
+  const y=yearData(), now=currentMonthIndex(sel), last=now>=0?now:11;
+  let i=last; for(let k=0;k<=last;k++) if(isEmptyMonth(y.months[k])){ i=k; break; }
+  openMonth(i);
+};
+document.addEventListener("click",e=>{ if(e.target.id==="nagBackup") backup(); });
+load(); render();
+if("serviceWorker" in navigator && location.protocol==="https:") navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
